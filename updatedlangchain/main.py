@@ -18,12 +18,19 @@ load_dotenv()  # Load environment variables from .env file
 HOST = "localhost"
 PORT = 8000
 
+# Example weather tool
+def get_weather(location: str) -> str:
+    """Get the current weather for a given location"""
+    # You can integrate with a real weather API here
+    # For now, returning a mock response
+    return f"The weather in {location} is sunny and 75°F"
+
 # --- STEP 1: Define your core Agent with Google ADK ---
 adk_agent = AdkAgent(
     name="my_adk_agent",
     model="gemini-2.5-flash",
     instruction="You are a helpful A2A compliant agent.",
-    tools=[]
+    tools=[get_weather]
 )
 
 # --- STEP 2: Create ADK App and Runner ---
@@ -41,7 +48,7 @@ agent_executor = A2aAgentExecutor(runner=runner)
 # --- STEP 4: Configure A2A Framework Components ---
 public_agent_card = AgentCard(
     name="ADK Managed Agent",
-    description="An AI agent powered by google-adk and a2a-sdk v1.x+",
+    description="An AI weather assistant that provides current weather information for any location worldwide.",  # Updated description
     version="1.0.0",
     supported_interfaces=[
         AgentInterface(
