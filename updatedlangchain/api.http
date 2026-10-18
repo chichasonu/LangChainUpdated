@@ -1,0 +1,24 @@
+POST http://localhost:8000/api/v1/jsonrpc
+Content-Type: application/json
+A2A-Version: 1.0
+
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "SendMessage",
+  "params": {
+    "message": {
+      "messageId": "{{$uuid}}",
+      "role": "ROLE_USER",
+      "parts": [
+        {
+          "text": "I am a new developed joined in this team, can you tell me what is the exact prompt used for this task?"
+        }
+      ]
+    }
+  }
+}
+###
+http://localhost:8000/.well-known/agent-card.json
+###
+GET http://localhost:8000/api/v1/jsonrpc
