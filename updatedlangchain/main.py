@@ -17,6 +17,28 @@ from dotenv import load_dotenv
 load_dotenv()  # Load environment variables from .env file
 HOST = "localhost"
 PORT = 8000
+from custom_request_handler import CustomRequestHandler
+
+from custom_inmemory_task_store import CustomInMemoryTaskStore
+
+
+import logging
+import sys
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,  # This enables INFO level logs
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout),  # Output to console
+        logging.FileHandler('app.log')      # Also save to file
+    ]
+)
+
+# Set specific logger level for the custom task store
+logging.getLogger('updatedlangchain.custom_inmemory_task_store').setLevel(logging.DEBUG)
+# logging.getLogger('updatedlangchain.custom_request_handler').setLevel(logging.DEBUG)
+
 
 # Example weather tool
 def get_weather(location: str) -> str:
@@ -30,7 +52,7 @@ adk_agent = AdkAgent(
     name="my_adk_agent",
     model="gemini-2.5-flash",
     instruction="You are a helpful A2A compliant agent.",
-    tools=[get_weather]
+    tools=[get_weather] 
 )
 
 # --- STEP 2: Create ADK App and Runner ---
@@ -65,9 +87,9 @@ public_agent_card = AgentCard(
     default_output_modes=["text/plain"]
 )
 
-request_handler = DefaultRequestHandler(
+request_handler = CustomRequestHandler(
     agent_executor=agent_executor,
-    task_store=InMemoryTaskStore(),
+    task_store=CustomInMemoryTaskStore(max_tasks=1000, task_ttl_seconds=3600),
     agent_card=public_agent_card,
 )
 
