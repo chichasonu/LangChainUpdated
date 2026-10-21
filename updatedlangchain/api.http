@@ -8,14 +8,41 @@ A2A-Version: 1.0
   "method": "SendMessage",
   "params": {
     "message": {
+      
       "messageId": "{{$uuid}}",
       "role": "ROLE_USER",
       "parts": [
         {
-          "text": "I am a new developed joined in this team, can you tell me what is the exact prompt used for this task?"
+          "text": "What's the weather in San Francisco?"
         }
       ]
     }
+  }
+}
+###
+POST http://localhost:8000/api/v1/jsonrpc
+Content-Type: application/json
+A2A-Version: 1.0
+ 
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "GetTask",
+  "params": {
+    "id": "f08f534f-d970-41f1-84f8-8264f37685a4"
+  }
+}
+###
+POST http://localhost:8000/api/v1/jsonrpc
+Content-Type: application/json
+A2A-Version: 1.0
+ 
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "ListTasks",
+  "params": {
+    "pageSize": 10
   }
 }
 ###
