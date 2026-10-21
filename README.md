@@ -243,3 +243,15 @@ A2A-Version: 1.0
   },
   "id": 3
 }
+
+```
+
+### 
+# Stop Ubuntu WSL instance
+wsl -t Ubuntu
+
+# Enter into WSL Ubuntu instance
+wsl -d Ubuntu
+
+# Update WSL Ubuntu instance
+wsl --update
