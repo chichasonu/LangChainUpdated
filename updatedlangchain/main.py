@@ -81,7 +81,7 @@ public_agent_card = AgentCard(
     ],
     capabilities=AgentCapabilities(
         streaming=True,
-        push_notifications=False
+        push_notifications=True
     ),
     default_input_modes=["text/plain"],
     default_output_modes=["text/plain"]
