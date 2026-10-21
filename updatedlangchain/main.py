@@ -20,6 +20,12 @@ PORT = 8000
 from custom_request_handler import CustomRequestHandler
 
 from custom_inmemory_task_store import CustomInMemoryTaskStore
+from custom_redis_task_store import CustomRedisTaskStore
+
+from adk_redis.sessions import (
+    RedisSessionMemoryService,
+    RedisSessionMemoryServiceConfig,
+)
 
 
 import logging
@@ -61,7 +67,26 @@ app = App(
     root_agent=adk_agent
 )
 
-session_service = InMemorySessionService()
+# session_service = InMemorySessionService()
+
+# session_service = RedisMemorySessionService(redis_client=redis_client)
+
+
+# WITH THIS - Redis Session Service:
+session_service = RedisSessionMemoryService(
+    config=RedisSessionMemoryServiceConfig(
+        backend="opensource-agent-memory",  # For self-hosted Redis
+        api_base_url="http://localhost:8000",  # Agent Memory Server endpoint (if using)
+        # For direct Redis connection without Agent Memory Server:
+        # You may need to use direct Redis client instead
+        # Alternative: Use redis-py directly with adk-redis
+    )
+)
+
+import redis
+redis_client = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
+ 
+
 runner = Runner(app=app, session_service=session_service)
 
 # --- STEP 3: Use Google ADK's built-in A2A executor ---
@@ -87,10 +112,19 @@ public_agent_card = AgentCard(
     default_output_modes=["text/plain"]
 )
 
+
+from a2a_redis import RedisTaskStore
+from a2a_redis.utils import create_redis_client
+ 
+
+redis_a2a_client = create_redis_client(url="redis://localhost:6379/0", max_connections=50)
+task_store = RedisTaskStore(redis_a2a_client, prefix="weather_agent:tasks:")
+
 request_handler = CustomRequestHandler(
     agent_executor=agent_executor,
-    task_store=CustomInMemoryTaskStore(max_tasks=1000, task_ttl_seconds=3600),
-    agent_card=public_agent_card,
+    # task_store=CustomInMemoryTaskStore(max_tasks=1000, task_ttl_seconds=3600),
+    task_store=task_store,
+    agent_card=public_agent_card
 )
 
 # --- STEP 5: Compose Router and Boot Server ---

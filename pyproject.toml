@@ -5,7 +5,9 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "a2a-redis>=0.2.1",
     "a2a-sdk[http-server]>=1.2.2",
+    "adk-redis>=0.0.10",
     "fastapi>=0.141.1",
     "google-adk>=2.11.0",
     "httpx>=0.28.1",
@@ -21,6 +23,7 @@ dependencies = [
     "pydantic>=2.13.4",
     "pyjwt>=2.15.1",
     "python-dotenv>=1.2.2",
+    "redis>=8.1.0",
     "uvicorn>=0.54.0",
 ]
 

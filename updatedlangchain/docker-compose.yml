@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:alpine
+    container_name: redis_server
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      # Maps local folder './redis_data' to Redis internal data directory for persistence
+      - ./redis_data:/data
+    command: redis-server --appendonly yes
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redis_insight
+    restart: always
+    ports:
+      - "5540:5540"
+    volumes:
+      # Persists RedisInsight configurations and saved database connections
+      - ./redisinsight_data:/db
+    depends_on:
+      - redis
