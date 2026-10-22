@@ -6,7 +6,7 @@ from typing import Optional
 from a2a.server.tasks.task_store import TaskStore
 from a2a.server.context import ServerCallContext
 from a2a.types.a2a_pb2 import Task, ListTasksRequest, ListTasksResponse
-from google.protobuf.json_format import MessageToDict, DictToMessage
+from google.protobuf.json_format import MessageToDict, Parse
 import logging
 
 logger = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ class CustomRedisTaskStore(TaskStore):
     def _dict_to_task(self, task_dict: dict) -> Task:
         """Convert dictionary back to protobuf Task."""
         task = Task()
-        DictToMessage(task_dict, task)
+        Parse(task_dict, task)
         return task
     
     async def save(self, task: Task, context: ServerCallContext) -> None:
@@ -75,7 +75,7 @@ class CustomRedisTaskStore(TaskStore):
         # Store in Redis hash
         key = f"{self.prefix}{task_id}"
         self.redis_client.hset(key, "data", task_json)
-        self.redis_client.hset(key, "updated_at", redis.commands.time()[0])
+        self.redis_client.hset(key, "updated_at", self.redis_client.time()[0])
         
         # Set TTL if configured
         if self.ttl_seconds:

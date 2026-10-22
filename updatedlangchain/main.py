@@ -21,12 +21,7 @@ from custom_request_handler import CustomRequestHandler
 
 from custom_inmemory_task_store import CustomInMemoryTaskStore
 from custom_redis_task_store import CustomRedisTaskStore
-
-from adk_redis.sessions import (
-    RedisSessionMemoryService,
-    RedisSessionMemoryServiceConfig,
-)
-
+from custom_redis_session_service import CustomRedisSessionService
 
 import logging
 import sys
@@ -72,17 +67,13 @@ app = App(
 # session_service = RedisMemorySessionService(redis_client=redis_client)
 
 
-# WITH THIS - Redis Session Service:
-session_service = RedisSessionMemoryService(
-    config=RedisSessionMemoryServiceConfig(
-        backend="opensource-agent-memory",  # For self-hosted Redis
-        api_base_url="http://localhost:8000",  # Agent Memory Server endpoint (if using)
-        # For direct Redis connection without Agent Memory Server:
-        # You may need to use direct Redis client instead
-        # Alternative: Use redis-py directly with adk-redis
-    )
-)
+# Remove or comment out:
+# session_service = InMemorySessionService()
 
+# Replace with:
+session_service = CustomRedisSessionService(host="localhost", port=6379, db=0)
+
+# WITH THIS - Redis Session Service:
 import redis
 redis_client = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
  
@@ -113,12 +104,15 @@ public_agent_card = AgentCard(
 )
 
 
-from a2a_redis import RedisTaskStore
-from a2a_redis.utils import create_redis_client
+# from a2a_redis import RedisTaskStore
+# from a2a_redis.utils import create_redis_client
  
 
-redis_a2a_client = create_redis_client(url="redis://localhost:6379/0", max_connections=50)
-task_store = RedisTaskStore(redis_a2a_client, prefix="weather_agent:tasks:")
+# redis_a2a_client = create_redis_client(url="redis://localhost:6379/0", max_connections=50)
+# task_store = RedisTaskStore(redis_a2a_client, prefix="weather_agent:tasks:")
+
+# Use your CustomRedisTaskStore instead:
+task_store = CustomRedisTaskStore(host="localhost", port=6379, db=0)
 
 request_handler = CustomRequestHandler(
     agent_executor=agent_executor,
